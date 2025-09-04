@@ -66,4 +66,4 @@ Um sistema de entrega de conteúdo agendado e furtivo:
 
 Para configurar o ambiente e implantar os Workers, certifique-se de que suas credenciais da Cloudflare (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`) estejam configuradas no arquivo `.env` na raiz do projeto. As dependências são gerenciadas via `npm` e os Workers são implantados usando `wrangler`.
 
-<!-- Triggered by Gemini CLI for workflow testing -->
+<!-- Triggered by Gemini CLI for workflow testing - Second attempt -->
