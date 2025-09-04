@@ -24,9 +24,7 @@ jobs:
       run: npm install puppeteer node-fetch cheerio
 
     - name: Run scraper
-      run: |
-        ls -l
-        node local_scraper.mjs
+      run: node local_scraper.mjs
 
     - name: Commit and push changes
       run: |
@@ -35,3 +33,4 @@ jobs:
         git add ./scraped_data/
         git commit -m "Scraped data update" || echo "No changes to commit"
         git push
+push
