@@ -65,13 +65,10 @@ async function runRecon() {
 
         // Capture JavaScript variables (example: looking for a global variable)
         const jsVariables = await page.evaluate(() => {
-            // Example: try to find a global variable that might contain video data
-            // This part needs to be refined based on actual site analysis
             const data = {};
-            if (window.someGlobalVideoData) {
-                data.someGlobalVideoData = window.someGlobalVideoData;
+            if (window.xv && window.xv.conf) {
+                data.xvConf = window.xv.conf;
             }
-            // Add more specific variable checks here
             return data;
         });
         fs.writeFileSync(path.join(outputDir, 'js_variables.json'), JSON.stringify(jsVariables, null, 2));
