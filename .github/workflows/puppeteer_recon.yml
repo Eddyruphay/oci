@@ -25,8 +25,10 @@ jobs:
       env:
         TARGET_URL: "https://www.xnxx.com/"
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: xnxx-recon-data
-        path: ./recon_data/
+    - name: Commit and push changes
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add ./recon_data/
+        git commit -m "Reconnaissance data update" || echo "No changes to commit"
+        git push
