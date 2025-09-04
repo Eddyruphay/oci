@@ -51,7 +51,7 @@ async function runRecon() {
         await page.evaluate(() => {
             window.scrollBy(0, window.innerHeight);
         });
-        await page.waitForTimeout(2000); // Wait for content to load after scroll
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for content to load after scroll
 
         // Capture rendered HTML
         const htmlContent = await page.content();
