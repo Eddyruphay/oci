@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const { default: fetch } = await import('node-fetch');
 const cheerio = require('cheerio');
 
 async function scrape() {
