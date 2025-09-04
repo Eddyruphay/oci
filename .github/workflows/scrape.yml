@@ -18,7 +18,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18' # Use a compatible Node.js version
+        node-version: '20' # Use a compatible Node.js version
 
     - name: Install dependencies
       run: npm install puppeteer node-fetch cheerio
