@@ -1,5 +1,5 @@
 const { default: fetch } = await import('node-fetch');
-const cheerio = require('cheerio');
+import cheerio from 'cheerio';
 
 async function scrape() {
     const targetUrl = "https://www.xnxx.com/";
