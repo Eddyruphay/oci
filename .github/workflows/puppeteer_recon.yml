@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -24,9 +25,6 @@ jobs:
       run: node puppeteer_script.js
       env:
         TARGET_URL: "https://www.xnxx.com/"
-
-    - name: Checkout repository
-      uses: actions/checkout@v4
 
     - name: Commit and push changes
       run: |
