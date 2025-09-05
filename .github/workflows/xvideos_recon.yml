@@ -6,6 +6,8 @@ on:
 jobs:
   recon:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Grant write permission for contents
 
     steps:
     - name: Checkout repository
