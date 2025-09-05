@@ -13,6 +13,9 @@ async function runXvideosRecon() {
     const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
 
+    // Set User-Agent
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36');
+
     // Intercept network requests
     const networkRequests = [];
     page.on('request', request => {
@@ -39,8 +42,32 @@ async function runXvideosRecon() {
     });
 
     try {
+        // Clear cookies before navigation
+        const client = await page.target().createCDPSession();
+        await client.send('Network.clearBrowserCookies');
+        console.log('Browser cookies cleared.');
+
         console.log(`Navigating to ${targetUrl}`);
         await page.goto(targetUrl, { waitUntil: 'networkidle0', timeout: 60000 });
+
+        // Check final URL
+        const finalUrl = page.url();
+        if (!finalUrl.startsWith('https://www.xvideos.com/')) {
+            console.error(`Redirected to unexpected URL: ${finalUrl}. Aborting reconnaissance.`);
+            fs.writeFileSync(path.join(outputDir, 'xvideos_error.log'), `Redirected to unexpected URL: ${finalUrl}`);
+            return;
+        }
+
+        // Attempt to bypass age disclaimer
+        console.log('Attempting to bypass age disclaimer...');
+        const enterButton = await page.$('#disclaimer_message .btn-primary');
+        if (enterButton) {
+            await enterButton.click();
+            await page.waitForNavigation({ waitUntil: 'networkidle0', timeout: 10000 }).catch(() => console.log('Navigation after disclaimer click timed out or did not occur.'));
+            console.log('Age disclaimer bypassed.');
+        } else {
+            console.log('No age disclaimer found or already bypassed.');
+        }
 
         // Capture rendered HTML of main page
         const mainPageHtmlContent = await page.content();
