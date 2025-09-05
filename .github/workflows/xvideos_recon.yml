@@ -22,7 +22,7 @@ jobs:
         npm install # Install other project dependencies
 
     - name: Run Xvideos Reconnaissance Script
-      run: node xvideos_recon_script.js
+      run: node ./xvideos_recon_script.js
 
     - name: Commit reconnaissance data
       run: |
