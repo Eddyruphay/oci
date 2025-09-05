@@ -21,6 +21,10 @@ jobs:
         npm install puppeteer # Install puppeteer directly for the recon script
         npm install # Install other project dependencies
 
+    - name: List files in current directory
+      run: ls -l
+      working-directory: ${{ github.workspace }}
+
     - name: Run Xvideos Reconnaissance Script
       working-directory: ${{ github.workspace }}
       run: node xvideos_recon_script.js
