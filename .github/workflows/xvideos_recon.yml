@@ -22,7 +22,8 @@ jobs:
         npm install # Install other project dependencies
 
     - name: Run Xvideos Reconnaissance Script
-      run: node ${{ github.workspace }}/xvideos_recon_script.js
+      working-directory: ${{ github.workspace }}
+      run: node xvideos_recon_script.js
 
     - name: Commit reconnaissance data
       run: |
