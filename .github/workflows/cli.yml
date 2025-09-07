@@ -22,5 +22,5 @@ jobs:
           RENDER_OWNER_ID: ${{ secrets.RENDER_OWNER_ID }}
         run: |
           /home/runner/.local/bin/render --version
-          /home/runner/.local/bin/render workspace set $RENDER_OWNER_ID
+          /home/runner/.local/bin/render workspace set $RENDER_OWNER_ID --output json
           /home/runner/.local/bin/render services list --output json
