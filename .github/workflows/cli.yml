@@ -1,0 +1,27 @@
+name: Render CLI Command
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: 'The Render CLI command to run (e.g., "services list")'
+        required: true
+
+jobs:
+  render-command:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Render CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/render-oss/cli/refs/heads/main/bin/install.sh | sh
+          sudo /opt/render/bin/render --version
+
+      - name: Run Render Command
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          sudo /opt/render/bin/render ${{ github.event.inputs.command }}
