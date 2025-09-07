@@ -19,5 +19,7 @@ jobs:
       - name: Run Render Command
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_OWNER_ID: ${{ secrets.RENDER_OWNER_ID }}
         run: |
-          /home/runner/.local/bin/render workspace current --output json
+          /home/runner/.local/bin/render workspace set --id $RENDER_OWNER_ID
+          /home/runner/.local/bin/render services list --output json
