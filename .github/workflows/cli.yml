@@ -23,4 +23,6 @@ jobs:
         run: |
           /home/runner/.local/bin/render --version
           /home/runner/.local/bin/render workspace set $RENDER_OWNER_ID --output json
-          /home/runner/.local/bin/render services list --output json
+          npm install
+          npm run build
+          npm start
