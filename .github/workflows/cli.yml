@@ -20,4 +20,4 @@ jobs:
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          /home/runner/.local/bin/render workspaces list --output json
+          /home/runner/.local/bin/render workspace list --output json
