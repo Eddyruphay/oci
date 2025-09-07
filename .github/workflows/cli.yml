@@ -2,10 +2,6 @@ name: Render CLI Command
 
 on:
   workflow_dispatch:
-    inputs:
-      command:
-        description: 'The Render CLI command to run (e.g., "services list")'
-        required: true
 
 jobs:
   render-command:
