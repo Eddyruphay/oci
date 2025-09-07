@@ -18,10 +18,10 @@ jobs:
       - name: Install Render CLI
         run: |
           curl -fsSL https://raw.githubusercontent.com/render-oss/cli/refs/heads/main/bin/install.sh | sh
-          sudo /opt/render/bin/render --version
+          /home/runner/.local/bin/render --version
 
       - name: Run Render Command
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          sudo /opt/render/bin/render ${{ github.event.inputs.command }}
+          /home/runner/.local/bin/render ${{ github.event.inputs.command }}
