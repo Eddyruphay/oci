@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: nexus-bot
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    plan: starter # Pode ser alterado para um plano pago se necessário para "Always On"
+    envVars:
+      - key: SUPABASE_URL
+        sync: false # Será configurado manualmente no dashboard do Render
+      - key: SUPABASE_ANON_KEY
+        sync: false # Será configurado manualmente no dashboard do Render
