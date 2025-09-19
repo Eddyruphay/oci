@@ -1,0 +1,35 @@
+name: Cloudflare Resource Discovery
+
+on:
+  workflow_dispatch:
+
+jobs:
+  discover-resources:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: List Cloudflare Resources
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          echo "--- Verifying authentication ---"
+          wrangler whoami
+          echo "\n--- Listing Workers ---"
+          wrangler worker list
+          echo "\n--- Listing R2 Buckets ---"
+          wrangler r2 bucket list
+          echo "\n--- Listing KV Namespaces ---"
+          wrangler kv namespace list
+          echo "\n--- Listing D1 Databases ---"
+          wrangler d1 list
