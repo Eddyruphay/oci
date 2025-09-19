@@ -25,8 +25,6 @@ jobs:
         run: |
           echo "--- Verifying authentication ---"
           wrangler whoami
-          echo "\n--- Listing Worker Deployments ---"
-          wrangler deployments list
           echo "\n--- Listing R2 Buckets ---"
           wrangler r2 bucket list
           echo "\n--- Listing KV Namespaces ---"
