@@ -1,0 +1,32 @@
+name: JARVIS 2
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: 'A tarefa para o JARVIS executar'
+        required: true
+        default: 'Resuma o último commit'
+
+jobs:
+  jarvis-brain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install Gemini CLI
+        run: npm install -g @google/gemini-cli
+
+      - name: Run Gemini CLI
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Executando tarefa: ${{ github.event.inputs.task }}"
+          gemini --non-interactive "${{ github.event.inputs.task }}"
