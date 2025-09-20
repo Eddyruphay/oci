@@ -23,9 +23,6 @@ jobs:
       - name: Install Gemini CLI
         run: npm install -g @google/gemini-cli
 
-      - name: Install JARVIS Tools Extension
-        run: gemini extensions install .gemini/extensions/jarvis-tools
-
       - name: Run Gemini CLI
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
