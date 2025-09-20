@@ -1,0 +1,5 @@
+{
+  "name": "jarvis-tools",
+  "version": "1.0.0",
+  "allowedTools": ["run_shell_command"]
+}
