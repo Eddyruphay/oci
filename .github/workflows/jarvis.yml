@@ -1,15 +1,12 @@
 name: JARVIS 2
 
 on:
-  workflow_dispatch:
-    inputs:
-      task:
-        description: 'A tarefa para o JARVIS executar'
-        required: true
-        default: 'Resuma o último commit'
+  issue_comment:
+    types: [created]
 
 jobs:
   jarvis-brain:
+    if: startsWith(github.event.comment.body, '/jarvis')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -28,5 +25,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Executando tarefa: ${{ github.event.inputs.task }}"
-          gemini "${{ github.event.inputs.task }}"
+          # Extrai o comando do corpo do comentário
+          TASK=$(echo "${{ github.event.comment.body }}" | sed 's/^\/jarvis //')
+          echo "Executando tarefa: $TASK"
+          gemini "$TASK"
