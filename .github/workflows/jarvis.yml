@@ -29,4 +29,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Executando tarefa: ${{ github.event.inputs.task }}"
-          gemini --non-interactive "${{ github.event.inputs.task }}"
+          gemini "${{ github.event.inputs.task }}"
