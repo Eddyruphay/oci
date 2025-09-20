@@ -28,4 +28,4 @@ jobs:
           # Extrai o comando do corpo do comentário
           TASK=$(echo "${{ github.event.comment.body }}" | sed 's/^\/jarvis //')
           echo "Executando tarefa: $TASK"
-          gemini "$TASK"
+          gemini --discover-tools "$TASK"
