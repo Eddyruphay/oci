@@ -8,6 +8,9 @@ jobs:
   jarvis-brain:
     if: startsWith(github.event.comment.body, '/jarvis')
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,11 +24,20 @@ jobs:
         run: npm install -g @google/gemini-cli
 
       - name: Run Gemini CLI
+        id: gemini_run
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Extrai o comando do corpo do comentário
           TASK=$(echo "${{ github.event.comment.body }}" | sed 's/^\/jarvis //')
           echo "Executando tarefa: $TASK"
-          gemini --allowed-tools run_shell_command --prompt "$TASK"
+          RESULT=$(gemini --allowed-tools run_shell_command --prompt "$TASK")
+          echo "result<<EOF" >> $GITHUB_OUTPUT
+          echo "$RESULT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Post Comment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} --body "${{ steps.gemini_run.outputs.result }}"
