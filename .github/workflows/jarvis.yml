@@ -5,6 +5,7 @@ on:
 
 jobs:
   jarvis-brain:
+    if: startsWith(github.event.comment.body, '/jarvis')
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -29,7 +30,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TASK="${{ github.event.comment.body }}"
+          TASK=$(echo "${{ github.event.comment.body }}" | sed 's/^\/jarvis //')
           echo "Executando tarefa: $TASK"
           RESULT=$(gemini --allowed-tools run_shell_command,read_file,write_file,search_file_content,glob --prompt "$TASK")
           echo "result<<EOF" >> $GITHUB_OUTPUT
