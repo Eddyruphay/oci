@@ -9,11 +9,19 @@ async function connectToWhatsApp() {
 
     const sock = makeWASocket({
         auth: state,
-        printQRInTerminal: true
+        pairingCode: true, // Use pairing code instead of QR
     });
 
     sock.ev.on('connection.update', (update) => {
-        const { connection, lastDisconnect } = update;
+        const { connection, lastDisconnect, qr } = update;
+
+        if(qr) {
+            console.log('------------------------------------------------');
+            console.log('PAIRING CODE: ', qr);
+            console.log('------------------------------------------------');
+            console.log('Abra o WhatsApp no seu celular, vá em "Aparelhos conectados" > "Conectar um aparelho" > "Conectar com número de telefone" e digite o código acima.');
+        }
+
         if(connection === 'close') {
             const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut;
             console.log('connection closed due to ', lastDisconnect?.error, ', reconnecting ', shouldReconnect);
