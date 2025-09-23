@@ -29,3 +29,5 @@ jobs:
           wrangler kv namespace list
           echo "\n--- Listing D1 Databases ---"
           wrangler d1 list
+          echo "\n--- Listing Workers ---"
+          wrangler worker list
