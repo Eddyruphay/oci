@@ -60,4 +60,4 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           echo "--- Checking for keys in HUNTER_KV ---"
-          wrangler kv:key list --namespace-id="169e93af6ef746df8d556a072f3b3457"
+          wrangler kv:key list --binding HUNTER_KV --config src/workers/hunter/wrangler.toml
