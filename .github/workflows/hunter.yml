@@ -1,0 +1,155 @@
+
+name: 4Reels Hunter
+
+on:
+  workflow_dispatch: # Permite acionamento manual
+  schedule:
+    - cron: '0 */6 * * *' # Executa a cada 6 horas
+
+jobs:
+  hunt-process-and-send:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 3. Install Dependencies
+        run: npm install cheerio
+
+      - name: 4. Restore Baileys Session from Cloudflare KV
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          KV_NAMESPACE_ID: "4a7d6cb32b3a4040aba70aed54064408"
+        run: |
+          echo "--- Restoring Baileys Session ---"
+          npm install -g wrangler
+          mkdir -p auth_info_baileys
+
+          # List of session files to restore (excluding the truncated one)
+          SESSION_FILES=(
+            "app-state-sync-key-AAAAAKxe.json"
+            "app-state-sync-version-critical_block.json"
+            "creds.json"
+            "pre-key-1.json"
+            "pre-key-10.json"
+            "pre-key-11.json"
+            "pre-key-12.json"
+            "pre-key-13.json"
+            "pre-key-14.json"
+            "pre-key-15.json"
+            "pre-key-16.json"
+            "pre-key-17.json"
+            "pre-key-18.json"
+            "pre-key-19.json"
+            "pre-key-20.json"
+            "pre-key-22.json"
+            "pre-key-23.json"
+            "pre-key-25.json"
+            "pre-key-26.json"
+            "pre-key-27.json"
+            "pre-key-28.json"
+            "pre-key-29.json"
+            "pre-key-30.json"
+            "pre-key-31.json"
+            "pre-key-4.json"
+            "pre-key-5.json"
+            "pre-key-6.json"
+            "pre-key-7.json"
+            "pre-key-8.json"
+            "pre-key-9.json"
+            "sender-key-120363402014588669@g.us--248025972781290--0.json"
+            "sender-key-status@broadcast--258847654330--0.json"
+            "session-248025972781290.0.json"
+            "session-258835097404.0.json"
+            "session-258841251204.0.json"
+            "session-258847654330.0.json"
+            "session-841251204.0.json"
+          )
+
+          for file_name in "${SESSION_FILES[@]}"; do
+            echo "Fetching $file_name from KV..."
+            wrangler kv key get "$file_name" --namespace-id="${KV_NAMESPACE_ID}" > "auth_info_baileys/$file_name"
+            if [ $? -ne 0 ]; then
+              echo "Warning: Failed to fetch $file_name from KV. It might not exist or an error occurred."
+            fi
+          done
+          
+          echo "Baileys session restoration attempt complete."
+          echo "---------------------------------"
+
+      - name: 5. Run Hunter Script
+        id: hunt
+        run: node scripts/hunter.mjs
+
+      - name: 6. Download, Process, and Send
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          WHATSAPP_AUTH_TOKEN: ${{ secrets.WHATSAPP_AUTH_TOKEN }} # Exemplo
+        run: |
+          echo "--- Starting Video Processing ---"
+          
+          if [ ! -f harvested_videos.json ]; then
+            echo "No new videos harvested. Exiting."
+            exit 0
+          fi
+
+          # Instalar FFmpeg
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+          # Loop através dos vídeos coletados
+          for row in $(cat harvested_videos.json | jq -c '.[]'); do
+            _jq() {
+              echo ${row} | jq -r ${1}
+            }
+
+            VIDEO_ID=$(_jq '.id')
+            DOWNLOAD_URL=$(_jq '.downloadUrl')
+
+            echo "Processing Video ID: $VIDEO_ID"
+
+            # ETAPA 1: VERIFICAR DUPLICATA NO KV
+            # -------------------------------------
+            # echo "Checking KV for duplicate: $VIDEO_ID"
+            # existing=$(npx wrangler kv:get --binding=HUNTER_KV --key="video:$VIDEO_ID" --plain)
+            # if [ -n "$existing" ]; then
+            #   echo "Video ID $VIDEO_ID already exists in KV. Skipping."
+            #   continue
+            # fi
+
+            # ETAPA 2: DOWNLOAD DO VÍDEO
+            # ---------------------------
+            echo "Downloading video..."
+            wget -O "original_video.mp4" "$DOWNLOAD_URL"
+            if [ $? -ne 0 ]; then
+              echo "Download failed for $VIDEO_ID. Skipping."
+              continue
+            fi
+
+            # ETAPA 3: PROCESSAR PARA FORMATO REELS (9:16)
+            # ---------------------------------------------
+            echo "Processing video to 9:16 format..."
+            ffmpeg -i original_video.mp4 -vf 'scale=720:1280,setsar=1' -c:a copy processed_video.mp4
+
+            # ETAPA 4: ENVIAR VIA WHATSAPP
+            # -----------------------------
+            echo "Sending video via WhatsApp... (Placeholder)"
+            # node scripts/whatsapp-sender.mjs --video processed_video.mp4 --caption "Novo vídeo! #$VIDEO_ID"
+
+            # ETAPA 5: REGISTRAR NO KV
+            # ------------------------
+            echo "Registering video in KV... (Placeholder)"
+            # npx wrangler kv:put --binding=HUNTER_KV --key="video:$VIDEO_ID" --value="processed"
+
+            # Limpar arquivos
+            rm original_video.mp4 processed_video.mp4
+            echo "Finished processing for Video ID: $VIDEO_ID"
+            echo "----------------------------------------"
+          done
