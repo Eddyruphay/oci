@@ -20,8 +20,10 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: 3. Install Dependencies
-        run: npm install cheerio
+      - name: 3. Install Hunter Worker Dependencies
+        run: |
+          cd hunter-worker
+          npm install
 
       - name: 4. Restore Baileys Session from Cloudflare KV
         env:
@@ -29,7 +31,7 @@ jobs:
           KV_NAMESPACE_ID: "4a7d6cb32b3a4040aba70aed54064408"
         run: |
           echo "--- Restoring Baileys Session ---"
-          npm install -g wrangler
+          npm install -g wrangler # Install wrangler globally
           mkdir -p auth_info_baileys
 
           # List of session files to restore (excluding the truncated one)
