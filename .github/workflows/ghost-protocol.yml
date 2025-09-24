@@ -1,0 +1,36 @@
+name: Ghost Protocol
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */2 * * *'
+
+jobs:
+  hunt-and-deliver:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          pip install yt-dlp
+
+      - name: Hunt, Download, and Process
+        run: |
+          echo "Hunting for a video link..."
+          VIDEO_URL="https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
+          
+          echo "Downloading video from $VIDEO_URL..."
+          yt-dlp -o "download.mp4" $VIDEO_URL
+          
+          echo "Processing video into Reel format..."
+          ffmpeg -i download.mp4 -vf "scale=720:1280,setsar=1" -t 15 -c:v libx264 -preset fast -c:a aac reel.mp4
+          
+          echo "Video processed successfully:"
+          ls -lh reel.mp4
+
+      - name: Deliver to WhatsApp
+        run: echo "Next step: Implement sending reel.mp4 to WhatsApp."

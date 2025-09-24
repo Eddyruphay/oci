@@ -1,0 +1,7 @@
+name = "hunter-worker"
+main = "index.ts"
+compatibility_date = "2023-10-30"
+
+[[kv_namespaces]]
+binding = "HUNTER_KV"
+id = "169e93af6ef746df8d556a072f3b3457"

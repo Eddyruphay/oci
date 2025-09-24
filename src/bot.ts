@@ -101,10 +101,14 @@ async function connectToWhatsApp() {
 
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect, qr } = update;
+
         if(qr) {
-            qrcode.generate(qr, { small: true });
-            console.log('QR Code gerado. Escaneie com seu celular ou use o código de pareamento.');
+            console.log('------------------------------------------------');
+            console.log('PAIRING CODE: ', qr);
+            console.log('------------------------------------------------');
+            console.log('Abra o WhatsApp no seu celular, vá em "Aparelhos conectados" > "Conectar um aparelho" > "Conectar com número de telefone" e digite o código acima.');
         }
+
         if (connection === 'close') {
             const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut;
             console.log('Conexão fechada por', lastDisconnect?.error, ', reconectando', shouldReconnect);
